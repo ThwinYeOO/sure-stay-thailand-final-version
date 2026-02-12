@@ -43,6 +43,13 @@ const ApplyPage = ({ navigate }: ApplyPageProps) => {
     serviceType: 'standard',
     passportFile: null as File | null,
     photoFile: null as File | null,
+     cardBrand: 'visa',
+    cardNumber: '',
+    cardHolder: '',
+    expiryMonth: '',
+    expiryYear: '',
+    cvc: '',
+    savePaymentDetails: false,
     termsAccepted: false,
   });
 
@@ -78,7 +85,16 @@ const ApplyPage = ({ navigate }: ApplyPageProps) => {
           return false;
         }
         return true;
-      case 4:
+      case 4:  if (
+          !formData.cardNumber ||
+          !formData.cardHolder ||
+          !formData.expiryMonth ||
+          !formData.expiryYear ||
+          !formData.cvc
+        ) {
+          toast.error('Please complete your card details');
+          return false;
+        }
         if (!formData.termsAccepted) {
           toast.error('Please accept the terms and conditions');
           return false;
@@ -403,7 +419,96 @@ const ApplyPage = ({ navigate }: ApplyPageProps) => {
           {currentStep === 4 && (
             <div className="space-y-5">
               <h2 className="text-xl font-semibold text-[#111111] mb-6">Payment</h2>
-              
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                {[
+                  { id: 'mastercard', label: 'Mastercard' },
+                  { id: 'visa', label: 'VISA' },
+                  { id: 'paypal', label: 'PayPal' },
+                  { id: 'cod', label: 'Cash on Delivery' },
+                ].map((method) => (
+                  <label
+                    key={method.id}
+                    className={`border rounded-xl px-3 py-4 text-center cursor-pointer transition-all ${
+                      formData.cardBrand === method.id
+                        ? 'border-[#111111] bg-[#D7FF3B]/20'
+                        : 'border-[rgba(17,17,17,0.1)] bg-white'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      className="hidden"
+                      name="payment-method"
+                      value={method.id}
+                      checked={formData.cardBrand === method.id}
+                      onChange={(e) => updateFormData('cardBrand', e.target.value)}
+                    />
+                    <div className="text-xs font-medium text-[#111111]">{method.label}</div>
+                  </label>
+                ))}
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-5">
+                <div>
+                  <label className="micro-label block mb-2">Card Number *</label>
+                  <input
+                    type="text"
+                    value={formData.cardNumber}
+                    onChange={(e) => updateFormData('cardNumber', e.target.value)}
+                    className="w-full px-4 py-3 bg-[#F6F7F6] rounded-xl text-[#111111] outline-none focus:ring-2 focus:ring-[#D7FF3B] transition-all"
+                    placeholder="1234 5678 9012 3456"
+                  />
+                </div>
+                <div>
+                  <label className="micro-label block mb-2">Cardholder *</label>
+                  <input
+                    type="text"
+                    value={formData.cardHolder}
+                    onChange={(e) => updateFormData('cardHolder', e.target.value)}
+                    className="w-full px-4 py-3 bg-[#F6F7F6] rounded-xl text-[#111111] outline-none focus:ring-2 focus:ring-[#D7FF3B] transition-all"
+                    placeholder="Full name"
+                  />
+                </div>
+                <div>
+                  <label className="micro-label block mb-2">Expiry Date *</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      value={formData.expiryMonth}
+                      onChange={(e) => updateFormData('expiryMonth', e.target.value)}
+                      className="w-full px-4 py-3 bg-[#F6F7F6] rounded-xl text-[#111111] outline-none focus:ring-2 focus:ring-[#D7FF3B] transition-all"
+                      placeholder="MM"
+                    />
+                    <input
+                      type="text"
+                      value={formData.expiryYear}
+                      onChange={(e) => updateFormData('expiryYear', e.target.value)}
+                      className="w-full px-4 py-3 bg-[#F6F7F6] rounded-xl text-[#111111] outline-none focus:ring-2 focus:ring-[#D7FF3B] transition-all"
+                      placeholder="YY"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="micro-label block mb-2">CVC *</label>
+                  <input
+                    type="text"
+                    value={formData.cvc}
+                    onChange={(e) => updateFormData('cvc', e.target.value)}
+                    className="w-full px-4 py-3 bg-[#F6F7F6] rounded-xl text-[#111111] outline-none focus:ring-2 focus:ring-[#D7FF3B] transition-all"
+                    placeholder="123"
+                  />
+                </div>
+              </div>
+
+              <label className="flex items-center gap-3 text-sm text-[#6D6D6D]">
+                <input
+                  type="checkbox"
+                  checked={formData.savePaymentDetails}
+                  onChange={(e) => updateFormData('savePaymentDetails', e.target.checked)}
+                  className="w-5 h-5 rounded border-[rgba(17,17,17,0.2)] text-[#D7FF3B] focus:ring-[#D7FF3B]"
+                />
+                Save my details for future purchases
+              </label>
+
               <div className="bg-[#F6F7F6] rounded-xl p-6 mb-6">
                 <h3 className="font-semibold text-[#111111] mb-4">Order Summary</h3>
                 <div className="space-y-2 mb-4">
