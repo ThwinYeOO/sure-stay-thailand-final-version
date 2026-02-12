@@ -70,5 +70,10 @@ export default defineConfig([
     },
   },
 ])
+
+Demo Credentials:
+Admin: admin@staysure.co / password
+User: john@example.com / password
+
 ```
 # sure-stay-thailand-final-version
